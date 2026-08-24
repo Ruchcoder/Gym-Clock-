@@ -10,7 +10,7 @@ This version keeps the approved UI while adding Firebase-backed authentication, 
 
 Developer feedback is saved under each signed-in user's `users/{uid}/feedback` collection in Firestore. The developer can review it in Firebase Console → Firestore Database.
 
-## Exercise tutorials
+## Exercise-tutorials
 The goal plans now embed real YouTube exercise tutorials inside the app using YouTube's embeddable player. The app does not download or re-upload the videos. Video source/title metadata is intentionally hidden; only the exercise name, explanation and embedded 16:9 player are shown.
 
 ##  Shop
