@@ -2,7 +2,7 @@
 
 This version keeps the approved UI while adding Firebase-backed authentication, visits, weight history, BMI labels, feedback, profile photos and theme settings.
 
-## Firebase
+## Firebase. 
 1. Enable Authentication → Email/Password.
 2. Create Firestore.
 3. Create Storage.
