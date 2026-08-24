@@ -13,7 +13,7 @@ Developer feedback is saved under each signed-in user's `users/{uid}/feedback` c
 ## Exercise tutorials
 The goal plans now embed real YouTube exercise tutorials inside the app using YouTube's embeddable player. The app does not download or re-upload the videos. Video source/title metadata is intentionally hidden; only the exercise name, explanation and embedded 16:9 player are shown.
 
-## Shop
+##  Shop
 The Shop area is intentionally a clean **Coming Soon** section. No products or payment UI is displayed until a secure checkout/subscription system is ready.
 
 ## Ask the Coach + Gemini
