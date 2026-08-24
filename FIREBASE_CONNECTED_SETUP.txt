@@ -1,0 +1,27 @@
+GYM CLOCK — REAL FIREBASE CONNECTION
+======================================
+
+Firebase project:
+  gym-clock-5aa6d
+
+This build now includes:
+- Firebase Email/Password Login
+- Create Account
+- Forgot Password
+- Firebase session persistence
+- User profile document in Firestore
+- Firestore security rules
+- Storage security rules for profile pictures
+
+IMPORTANT:
+1. Firebase Console -> Authentication -> Sign-in method -> enable Email/Password.
+2. Firebase Console -> Firestore Database -> Create database.
+3. Firebase Console -> Storage -> Get started.
+4. Apply firestore.rules and storage.rules.
+5. Deploy this project to Netlify.
+
+The Firebase web config is included in firebase.js. Web API keys are not secret credentials;
+Firestore/Storage/Auth rules protect the data.
+
+The remaining app features (clock records, cost calculations, shop/Paystack and Gemini)
+must call the authenticated user's Firebase UID and server-side Netlify functions.

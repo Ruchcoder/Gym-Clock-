@@ -1,0 +1,9 @@
+{
+  "name":"gym-clock-v9",
+  "private":true,
+  "type":"module",
+  "dependencies":{
+    "@google/genai":"^1.16.0",
+    "firebase-admin":"^13.4.0"
+  }
+}

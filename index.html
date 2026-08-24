@@ -1,0 +1,633 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Gym Clock</title>
+<style>
+:root{--bg:#f4f6f3;--card:#fff;--ink:#17201b;--muted:#69736d;--line:#dfe5e0;--accent:#b9e34b;--dark:#111613}
+*{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,sans-serif}
+button,input,select{font:inherit}button{cursor:pointer}
+.app{max-width:720px;margin:auto;min-height:100vh;padding-bottom:90px}.top{padding:20px 18px 8px;display:flex;justify-content:space-between;align-items:center}
+.todayDate{display:block!important;font-size:12px;font-weight:800;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin:0 0 5px 0;line-height:1.25;min-height:15px}.welcome{font-size:27px;font-weight:850}.avatar{width:48px;height:48px;border-radius:50%;background:#dfe8df;display:grid;place-items:center;overflow:hidden;font-weight:800}.avatar img{width:100%;height:100%;object-fit:cover}
+.page{display:none;padding:8px 18px 28px}.page.active{display:block}.page>h1{padding-top:14px}.recommendation-card h2{margin-bottom:4px}.rec-section{margin-top:26px}.rec-section h3{font-size:18px;letter-spacing:1.2px;margin:0 0 10px}.rec-section p{margin:6px 0;line-height:1.65}.rec-section ul{margin:0;padding-left:25px}.rec-section li{margin:8px 0;line-height:1.55}.card{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:18px;margin:12px 0;box-shadow:0 8px 28px #17201b0b}
+.hero{background:var(--dark);color:#fff;border-radius:24px;padding:22px;margin:10px 0 14px}.hero .eyebrow{color:#c6cec8}
+.eyebrow{font-size:11px;font-weight:850;letter-spacing:1.3px;color:var(--muted);margin-bottom:7px}
+h1{font-size:26px;letter-spacing:-.6px;margin:0 0 8px}h2{font-size:19px;margin:0 0 10px}h3{font-size:16px;margin:18px 0 8px}.small{font-size:13px;color:var(--muted);line-height:1.5}
+.btn{border:0;border-radius:14px;padding:13px 15px;font-weight:850}.primary{background:var(--accent);color:#10150f}.secondary{background:#edf1ed;color:var(--ink)}.full{width:100%}.btn:disabled{opacity:.45}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.metric{font-size:28px;font-weight:900}
+.result{background:#f7f9f7;border:1px solid var(--line);border-radius:16px;padding:13px;margin-top:10px}.notice{background:#eef7df;border:1px solid #d8e9b6;border-radius:14px;padding:13px}
+.pills{display:flex;flex-wrap:wrap;gap:8px}.pill{border:1px solid var(--line);background:#fff;padding:10px 12px;border-radius:999px;font-size:12px;font-weight:800}.pill.selected{background:var(--dark);color:#fff;border-color:var(--dark)}
+label{font-size:12px;font-weight:800;color:var(--muted);display:block}input,select{width:100%;margin-top:6px;border:1px solid var(--line);border-radius:12px;padding:12px;background:#fff;color:var(--ink)}
+.visit{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--line)}.badge{background:#edf5df;border-radius:999px;padding:6px 9px;font-size:11px;font-weight:850;height:max-content}
+.goal{border:1px solid var(--line);border-radius:18px;padding:16px;margin:10px 0;background:#fff}.goal summary{font-weight:850;cursor:pointer;list-style:none}.goal summary::-webkit-details-marker{display:none}.goal summary:before{content:"+";display:inline-block;width:23px}.goal[open] summary:before{content:"−"}
+.day{border-left:3px solid var(--accent);padding:12px 12px 12px 15px;background:#f8faf7;border-radius:0 14px 14px 0;margin:9px 0}.day b{display:block;margin-bottom:4px}.rest{border-left-color:#cbd3cd}
+.exercise{border:1px solid var(--line);border-radius:15px;padding:12px;margin:8px 0}.exercise .row{display:flex;justify-content:space-between;gap:10px}.scheme{font-size:12px;font-weight:800;color:#455049}
+.video{min-height:155px;border-radius:17px;background:linear-gradient(135deg,#17201b,#39433d);display:grid;place-items:center;text-align:center;color:white;margin:9px 0;padding:14px}.play{width:54px;height:54px;border-radius:50%;background:var(--accent);color:#10150f;display:grid;place-items:center;font-size:22px;margin:auto}.video a{display:inline-block;margin-top:10px;color:#10150f;background:var(--accent);padding:9px 12px;border-radius:10px;font-weight:850;text-decoration:none}.video small{display:block;margin-top:7px;color:#e5ebe6}
+.chat{border:1px solid var(--line);border-radius:18px;padding:14px}.messages{max-height:260px;overflow:auto;background:#f7f9f7;border-radius:14px;padding:10px;margin-bottom:10px}.msg{padding:9px 11px;border-radius:13px;margin:7px 0;max-width:88%;font-size:13px}.bot{background:#e9eee9}.user{background:var(--dark);color:#fff;margin-left:auto}.chatrow{display:flex;gap:7px}.chatrow input{margin:0}.shop{display:grid;grid-template-columns:1fr 1fr;gap:10px}.product{border:1px solid var(--line);border-radius:16px;padding:12px}.productpic{height:105px;border-radius:12px;background:#edf1ed;display:grid;place-items:center;font-size:34px;margin-bottom:9px}
+.cartline{display:flex;justify-content:space-between;gap:10px;padding:7px 0;border-bottom:1px solid var(--line)}#paymentStatus,#passStatus,#resetStatus{margin-top:8px}.nav{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(4,1fr);z-index:20;padding:7px 8px calc(7px + env(safe-area-inset-bottom))}.nav button{border:0;background:transparent;color:var(--muted);font-size:10px;font-weight:850}.nav span{display:block;font-size:20px}.nav .active{color:var(--ink)}
+@media(max-width:480px){.grid3{grid-template-columns:1fr}.shop{grid-template-columns:1fr}.welcome{font-size:24px}}
+
+:root{--bg:#f4f6ed;--card:#fff;--ink:#172019;--muted:#6d756e;--line:#dfe4dd;--accent:#b7e72d}
+body.dark{--bg:#111511;--card:#1b211c;--ink:#f2f5ef;--muted:#aeb7ae;--line:#343c35;--accent:#c1ef36}
+body{background:var(--bg);color:var(--ink)}
+.card,.product{background:var(--card)!important;color:var(--ink)}
+.small,.muted{color:var(--muted)}
+.profileSettings{border:1px solid var(--line);border-radius:16px;padding:12px;margin-bottom:14px}
+.profilePreview{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.profilePreview img{width:58px;height:58px;border-radius:50%;object-fit:cover;background:var(--line)}
+.fileLabel{display:block;border:1px solid var(--line);border-radius:12px;padding:11px;text-align:center;cursor:pointer;font-weight:700}
+.fileLabel input{display:none}
+.themeRow{display:flex;gap:10px}
+.themeBtn{flex:1}
+body.dark input,body.dark textarea{background:#121712;color:var(--ink);border-color:var(--line)}
+body.dark .btn.secondary{background:#242c25;color:var(--ink);border-color:#424b43}
+<style id="loginStyle">
+.loginOverlay{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px}
+.loginBox{width:min(440px,100%);background:var(--card);border:1px solid var(--line);border-radius:24px;padding:24px;box-shadow:0 18px 50px rgba(0,0,0,.12)}
+.loginBox input{width:100%;box-sizing:border-box;margin:8px 0 12px;padding:13px;border:1px solid var(--line);border-radius:12px;background:transparent;color:var(--ink)}
+.aiSources{margin-top:10px;padding-top:8px;border-top:1px solid var(--line);font-size:12px}.aiSources a{color:inherit;text-decoration:underline}
+</style>
+<style>#loginOverlay{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:20px}#loginOverlay .loginBox{width:min(420px,100%);background:var(--card);border:1px solid var(--line);border-radius:24px;padding:24px;box-shadow:0 20px 60px rgba(0,0,0,.15)}#loginOverlay input{display:block;width:100%;box-sizing:border-box;margin:7px 0 14px;padding:12px;border:1px solid var(--line);border-radius:12px;background:transparent;color:var(--ink)}</style><style id="firebaseAuthCss">
+#firebaseGate{position:fixed;inset:0;z-index:10000;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:20px}
+#firebaseGate .authCard{width:min(430px,100%);background:var(--card);border:1px solid var(--line);border-radius:24px;padding:25px;box-shadow:0 20px 60px rgba(0,0,0,.14)}
+#firebaseGate .authLogo{width:54px;height:54px;border-radius:18px;background:var(--accent);display:grid;place-items:center;font-weight:950;font-size:24px;margin-bottom:16px}
+#firebaseGate h1{margin:0 0 7px}#firebaseGate p{color:var(--muted);line-height:1.5}
+#firebaseGate label{margin-top:12px}#firebaseGate input{width:100%;box-sizing:border-box;margin-top:6px}
+#firebaseGate .authActions{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-top:10px}
+#firebaseGate .linkBtn{border:0;background:transparent;color:var(--ink);font-weight:800;padding:8px 0;cursor:pointer}
+#firebaseGate .authError{min-height:20px;color:#c43f3f;font-size:13px;font-weight:750;margin-top:10px}
+#firebaseGate .hidden{display:none!important}
+
+/* Final theme readability + embedded tutorial cards */
+body.dark .nav{background:var(--card);color:var(--ink)}
+body.dark .nav button{color:var(--muted)}
+body.dark .nav .active{color:var(--ink)}
+body.dark .result,body.dark .day,body.dark .goal,body.dark .messages{background:#151b16;color:var(--ink)}
+body.dark .pill{background:#1b211c;color:var(--ink);border-color:var(--line)}
+body.dark .pill.selected{background:var(--accent);color:#10150f;border-color:var(--accent)}
+body.dark .badge{background:#26331f;color:var(--ink)}
+body.dark .notice{background:#202b1c;color:var(--ink);border-color:#3a4b2b}
+body.dark .chat{background:var(--card);color:var(--ink);border-color:var(--line)}
+body.dark .messages{background:#0f140f;color:var(--ink);border:1px solid var(--line)}
+body.dark .msg.bot{background:#222a24;color:var(--ink)}
+body.dark .msg.user{background:var(--accent);color:#10150f}
+body.dark .chatrow input,body.dark #chatInput,body.dark #feedbackText{background:#121712!important;color:var(--ink)!important;border-color:var(--line)!important}
+body.dark input::placeholder,body.dark textarea::placeholder{color:#89938b;opacity:1}
+body.dark .coachSuggestion{background:#171d18;color:var(--ink);border-color:var(--line)}
+.coachSuggestions{display:flex;flex-wrap:wrap;gap:8px;margin:9px 0 10px}
+.coachSuggestion{border:1px solid var(--line);background:var(--card);color:var(--ink);padding:9px 12px;border-radius:999px;font-size:12px;cursor:pointer}
+.coachSuggestion:active{transform:translateY(1px)}
+.msgMeta{font-size:10px;opacity:.6;margin-top:5px;text-align:right}
+#sendFeedback:disabled{opacity:.65;cursor:wait}
+body.dark .videoCard{border-color:var(--line)}
+.videoCard{border:1px solid var(--line);border-radius:17px;overflow:hidden;background:#000;margin-top:10px;width:100%}
+.videoCard iframe{display:block;width:100%;aspect-ratio:16/9;border:0;background:#000}
+</style>
+</head>
+<body><div id="firebaseGate"><div class="authCard">
+<div class="authLogo">G</div>
+<div id="loginPane"><h1>Welcome back</h1><p>Log in to your Gym Clock account to continue.</p><form id="loginForm">
+<label>Email<input id="loginEmail" type="email" autocomplete="email" required placeholder="you@example.com"></label>
+<label>Password<input id="loginPassword" type="password" autocomplete="current-password" required placeholder="Your password"></label>
+<button class="btn primary full" style="margin-top:14px" type="submit">LOG IN</button></form>
+<div class="authActions"><button class="linkBtn" id="forgotFirebase" type="button">Forgot password?</button><button class="linkBtn" id="showSignup" type="button">Create account</button></div></div>
+<div id="signupPane" class="hidden"><button class="linkBtn" id="showLogin" type="button">← Back to login</button><h1>Create account</h1><p>Create your Gym Clock account.</p><form id="signupForm">
+<label>Name<input id="signupName" type="text" autocomplete="name" required placeholder="Your name"></label>
+<label>Email<input id="signupEmail" type="email" autocomplete="email" required placeholder="you@example.com"></label>
+<label>Password<input id="signupPassword" type="password" autocomplete="new-password" minlength="6" required placeholder="At least 6 characters"></label>
+<button class="btn primary full" style="margin-top:14px" type="submit">CREATE ACCOUNT</button></form></div>
+<div id="firebaseAuthMsg" class="authError"></div></div></div>
+
+<div class="app">
+<section id="home" class="page active">
+ <header class="top">
+  <div><div class="todayDate" id="todayDate"></div><div class="welcome">Welcome <span id="nameText">Ruth</span>,</div></div>
+  <label class="avatar" for="avatarPhotoInput"><span id="initials">R</span><img id="avatarImg" alt="" style="display:none"></label>
+  <input id="avatarPhotoInput" type="file" accept="image/*" style="display:none">
+ </header>
+ <div class="hero">
+  <div class="eyebrow">YOUR NEXT STEP</div>
+  <h1>What do you want to work on?</h1>
+  <p class="small" style="color:#d3dbd5">Choose your focus and we'll guide you to a personalised plan.</p>
+  <button class="btn primary full" id="chooseGoal">CHOOSE MY GOAL</button>
+ </div>
+ <div class="card">
+  <div class="eyebrow">VISIT TRACKER</div>
+  <div class="grid2">
+   <div class="result"><div class="metric" id="weekVisits">0</div><div class="small">This week</div></div>
+   <div class="result"><div class="metric" id="monthVisits">0</div><div class="small">This month</div></div>
+  </div>
+  <button class="btn primary full" id="clockIn" style="margin-top:10px">CLOCK IN</button>
+  <button class="btn secondary full" id="clockOut" style="margin-top:8px">CLOCK OUT</button>
+  <p class="small" id="clockStatus" style="margin-top:10px">Clock in when you arrive and clock out when you leave.</p>
+ </div>
+ <div class="card"><div class="eyebrow">RECENT VISITS</div><div id="visits"></div></div>
+ <div class="card">
+  <div class="eyebrow">CHECK BMI & LOG WEIGHT</div>
+  <div class="grid2"><label>Weight (kg)<input id="weight" type="number"></label><label>Height (cm)<input id="height" type="number"></label></div>
+  <button class="btn secondary full" id="bmi" style="margin-top:10px">CHECK BMI</button><button class="btn primary full" id="logWeight" style="margin-top:8px">LOG WEIGHT</button><div id="bmiResult" class="result" style="display:none"></div><div class="card" style="margin-top:12px;padding:14px"><div class="eyebrow">WEIGHT HISTORY</div><div id="weightHistory"><p class="small">No weight entries yet.</p></div></div>
+ </div>
+</section>
+
+<section id="goals" class="page">
+ <h1>Goals & Tutorials</h1><p class="small">Pick one focus. Then choose your experience level and get a short recommendation before opening the full exercise plan.</p>
+ <div class="card">
+  <div class="eyebrow" style="font-size:15px">WHAT'S YOUR MAIN FOCUS?</div>
+  <div class="pills" id="focus">
+   <button class="pill" data-v="Lose fat">Lose fat</button>
+   <button class="pill" data-v="Build muscle">Build muscle</button>
+   <button class="pill" data-v="Tone up">Tone up</button>
+   <button class="pill" data-v="Get stronger">Get stronger</button>
+   <button class="pill" data-v="General fitness">General fitness</button>
+  </div>
+  <div class="eyebrow" style="font-size:15px;margin-top:24px">TARGET AREA</div><div class="pills" id="area"><button class="pill" data-v="Full body">Full body</button><button class="pill" data-v="Upper body">Upper body</button><button class="pill" data-v="Legs & glutes">Legs & glutes</button><button class="pill" data-v="Core & abs">Core & abs</button><button class="pill" data-v="Arms">Arms</button></div>
+  <div class="eyebrow" style="font-size:15px;margin-top:24px">EXPERIENCE LEVEL</div><div class="pills" id="level"><button class="pill" data-v="Beginner">Beginner</button><button class="pill" data-v="Intermediate">Intermediate</button><button class="pill" data-v="Advanced">Advanced</button></div>
+  <div class="eyebrow" style="font-size:15px;margin-top:24px">DAILY FOOD BUDGET</div><div class="pills" id="budget"><button class="pill" data-v="Under ₦1,000">Under ₦1,000</button><button class="pill" data-v="Under ₦2,000">Under ₦2,000</button><button class="pill" data-v="No strict budget">No strict budget</button></div>
+  <button class="btn primary full" id="getRec" style="margin-top:18px">GET MY RECOMMENDATION</button><p id="goalError" class="small"></p>
+ </div>
+
+ <div class="card recommendation-card" id="recCard" style="display:none">
+  <h2 style="font-size:22px">Your Recommendation</h2>
+  <h3 id="recTitle"></h3><p class="small" id="recMeta"></p>
+  <div class="rec-section"><h3>REP &amp; REST SCHEME</h3><p id="recScheme"></p><p id="recRest"></p></div>
+  <div class="rec-section"><h3>RECOMMENDED EXERCISES</h3><ul id="recExercises"></ul></div>
+  <div class="rec-section"><h3>BUDGET-FRIENDLY MEALS</h3><ul id="recMeals"></ul><p class="small" id="recMealNote"></p></div>
+  <div class="rec-section"><h3>NOTES FOR YOU</h3><ul id="recNotes"></ul></div>
+  <button class="btn primary full" id="openPlan" style="margin-top:10px">VIEW FULL EXERCISE PLAN &amp; TUTORIALS</button>
+ </div>
+
+ <div class="card">
+  <div class="eyebrow">FULL DETAILED PLANS</div>
+  <details class="goal" id="losePlan"><summary>Lean & Toned</summary><div id="loseContent"></div></details>
+  <details class="goal" id="strengthPlan"><summary>Build Muscle (Bulk)</summary><div id="strengthContent"></div></details>
+  <details class="goal" id="powerPlan"><summary>Strength & Power</summary><div id="powerContent"></div></details>
+  <details class="goal" id="tonePlan"><summary>General Fitness & Endurance</summary><div id="toneContent"></div></details>
+ </div>
+</section>
+
+<section id="cost" class="page">
+ <h1>Membership Cost</h1><p class="small">Compare the previous month's actual visits. Rates are editable.</p>
+ <div class="card"><div class="grid3"><label>Daily ₦<input id="daily" type="number" value="1000"></label><label>Weekly ₦<input id="weekly" type="number" value="5000"></label><label>Monthly ₦<input id="monthly" type="number" value="15000"></label></div><button class="btn secondary full" id="saveRates" style="margin-top:10px">SAVE RATES</button></div>
+ <div class="card"><div class="eyebrow">LAST MONTH ADVICE</div><div id="costResult"></div></div>
+</section>
+
+<section id="more" class="page">
+ <h1>More & Account</h1>
+ <div class="card"><h2>Profile</h2>
+  <label>Name<input id="nameInput" value="Ruth"></label>
+  <button class="btn primary full" id="saveName" style="margin-top:10px">SAVE NAME</button>
+  <label class="fileLabel" style="margin-top:10px">UPLOAD NEW PROFILE PICTURE<input id="photoInput" type="file" accept="image/*"></label>
+  <p id="profileStatus" class="small"></p>
+</div>
+ <div class="card"><h2>ASK THE COACH</h2>
+  <div class="chat"><div class="messages" id="messages"><div class="msg bot">Hi! Tell me your goal, experience level or ask for a simple workout suggestion.</div></div>
+  <div class="coachSuggestions" id="coachSuggestions">
+   <button type="button" class="coachSuggestion" data-question="Cheap food to lose weight">Cheap food to lose weight</button>
+   <button type="button" class="coachSuggestion" data-question="Protein substitute">Protein substitute</button>
+   <button type="button" class="coachSuggestion" data-question="Meals under ₦1,000">Meals under ₦1,000</button>
+   <button type="button" class="coachSuggestion" data-question="Best exercise for arms">Best exercise for arms</button>
+  </div>
+  <div class="chatrow"><input id="chatInput" placeholder="Ask about food, exercise, or budget"><button class="btn primary" id="sendChat">Ask</button></div></div>
+ </div>
+ <div class="card"><h2>Shop</h2>
+  <div class="notice"><b>Shop coming soon</b><p class="small" style="margin-bottom:0">Products, subscriptions and secure payments will be added here later. Nothing is available to purchase yet.</p></div>
+ </div>
+
+ <div class="card"><h2>Suggestions for the Developer</h2><p class="small">Tell us what is working, what is confusing, or what you would like added next. Your suggestion is saved to Firebase for the developer.</p><label>Suggestion<textarea id="feedbackText" rows="4" placeholder="Share an idea or report something that needs improvement..." style="width:100%;margin-top:6px;border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--card);color:var(--ink)"></textarea></label><button class="btn primary full" id="sendFeedback" style="margin-top:10px">SEND SUGGESTION</button><p id="feedbackStatus" class="small"></p></div>
+ <div class="card"><h2>Settings & Account</h2>
+  <h3>Theme</h3>
+  <div class="themeRow">
+    <button class="btn secondary themeBtn" data-theme="light" id="lightTheme">☀ LIGHT THEME</button>
+    <button class="btn secondary themeBtn" data-theme="dark" id="darkTheme">◐ DARK THEME</button>
+  </div>
+  <p class="small">Your theme is saved on this device.</p>
+
+  <h3>Account</h3>
+  <button class="btn secondary full" id="logout">LOG OUT</button>
+  <p id="logoutStatus" class="small"></p>
+
+  <hr style="border:0;border-top:1px solid var(--line);margin:18px 0">
+  <p class="small">Testing tools and password recovery</p>
+  <p class="small">For testing, you can clear only your clock-in/clock-out history without deleting your profile.</p>
+  <button class="btn secondary full" id="resetClock">RESET CLOCK HISTORY</button>
+  <div style="height:10px"></div>
+  <button class="btn secondary full" id="togglePasswordForm" type="button">CHANGE PASSWORD</button>
+  <div id="passwordForm" style="display:none;margin-top:12px">
+   <label>Current password<input id="currentPass" type="password" autocomplete="current-password"></label>
+   <label style="margin-top:8px">New password<input id="newPass" type="password" autocomplete="new-password"></label>
+   <label style="margin-top:8px">Confirm new password<input id="confirmPass" type="password" autocomplete="new-password"></label>
+   <button class="btn primary full" id="changePass" type="button" style="margin-top:10px">SAVE NEW PASSWORD</button>
+   <p id="passStatus" class="small"></p>
+  </div>
+  <h3>Forgot Password</h3>
+  <label>Email<input id="resetEmail" type="email" placeholder="you@example.com" autocomplete="email"></label>
+  <button class="btn secondary full" id="forgotPass" style="margin-top:10px">SEND RESET EMAIL</button>
+  <p id="resetStatus" class="small"></p>
+  <p class="small">Password changes and resets are handled securely through Firebase Authentication.</p>
+ </div>
+</section>
+
+<nav class="nav"><button class="active" data-page="home"><span>⌂</span>HOME</button><button data-page="goals"><span>◎</span>GOALS</button><button data-page="cost"><span>₦</span>COST</button><button data-page="more"><span>☰</span>MORE</button></nav>
+</div>
+
+<script>
+(function(){
+const $=id=>document.getElementById(id);
+const pick={focus:"",area:"",level:"",budget:""};
+const data={
+"Lose Fat":{plan:"losePlan",detail:"Lean & Toned",scheme:"2–3 sets × 12–15 reps",rest:"45–60 sec rest between sets.",exercises:["Squats — 2–3 sets × 12–15 reps","Push-ups — 2–3 sets × 8–12 reps","Bent-over rows — 2–3 sets × 10–12 reps","Walking lunges — 2–3 sets × 10–12 reps per leg","Plank — 2–3 sets × 30–45 sec","Brisk walk, cycling or similar cardio — 20–30 min"],meals:["Boiled eggs + garden egg or cucumber","Beans (ewa) + a moderate portion of rice + vegetables","Grilled/boiled chicken or fish + vegetables","Unsweetened oats + a little groundnut"],mealNote:"Choose portions that fit your hunger, activity and budget. Local proteins such as eggs and beans can help keep meals affordable.",notes:["Start at a comfortable level and prioritise good technique.","Build consistency before increasing difficulty.","Take rest days seriously and recover well."]},
+"Build Muscle":{plan:"strengthPlan",detail:"Build Muscle (Bulk)",scheme:"2–4 sets × 8–12 reps",rest:"90–150 sec rest between sets.",exercises:["Squats or leg press — 2–4 sets × 8–12 reps","Push-ups or bench press — 2–4 sets × 8–12 reps","Lat pulldown or assisted pull-ups — 2–4 sets × 8–12 reps","Rows — 2–4 sets × 8–12 reps","Romanian deadlift — 2–3 sets × 8–12 reps","Plank — 2–3 sets × 30–60 sec"],meals:["Eggs + oats + fruit","Beans + rice + vegetables","Chicken/fish + rice or potatoes + vegetables","Yoghurt or milk + oats where suitable"],mealNote:"Aim for regular, balanced meals with enough protein and carbohydrates to support training and recovery.",notes:["Increase resistance gradually when your form is solid.","Allow recovery between hard sessions.","Do not sacrifice technique just to lift heavier."]},
+"Tone Up":{plan:"losePlan",detail:"Lean & Toned",scheme:"2–3 sets × 10–15 reps",rest:"45–75 sec rest between sets.",exercises:["Squats — 2–3 sets × 12–15 reps","Walking lunges — 2–3 sets × 10–12 reps per leg","Push-ups — 2–3 sets × 8–12 reps","Rows — 2–3 sets × 10–12 reps","Glute bridge — 2–3 sets × 12–15 reps","Plank — 2–3 sets × 30–45 sec"],meals:["Eggs + vegetables","Beans + a moderate rice portion + vegetables","Boiled/grilled fish or chicken + vegetables","Oats + fruit + a little groundnut"],mealNote:"Keep meals varied and balanced rather than relying on one food group.",notes:["Use controlled movement and full comfortable ranges.","Progress gradually as the exercises become easier.","Rest and recovery are part of the programme."]},
+"Get Stronger":{plan:"powerPlan",detail:"Strength & Power",scheme:"2–4 sets × 6–10 reps",rest:"90–150 sec rest between sets.",exercises:["Squat — 2–4 sets × 6–10 reps","Deadlift or Romanian deadlift — 2–4 sets × 6–10 reps","Bench press or push-up — 2–4 sets × 6–10 reps","Row or lat pulldown — 2–4 sets × 6–10 reps","Overhead press — 2–3 sets × 8–10 reps","Loaded carry or core exercise — 2–3 sets"],meals:["Eggs + oats + fruit","Beans + rice + vegetables","Chicken/fish + potatoes or rice + vegetables","Milk/yoghurt where suitable + oats"],mealNote:"Use balanced meals to support training. Adjust portions to your individual needs and activity level.",notes:["Warm up before strength work.","Prioritise controlled technique and safe progression.","Stop an exercise if you cannot maintain good form."]},
+"General Fitness":{plan:"tonePlan",detail:"General Fitness & Endurance",scheme:"2–3 sets × 10–15 reps",rest:"45–90 sec rest between sets.",exercises:["Bodyweight squats — 2–3 sets × 12–15 reps","Push-ups — 2–3 sets × 8–12 reps","Rows or pulldowns — 2–3 sets × 10–12 reps","Step-ups or lunges — 2–3 sets × 10–12 reps per leg","Plank — 2–3 sets × 30–45 sec","Brisk walking, cycling or swimming — 20–30 min"],meals:["Beans + rice + vegetables","Eggs + oats + fruit","Fish/chicken + vegetables + a staple food","Boiled yam or sweet potato + egg/fish + vegetables"],mealNote:"Choose affordable, varied meals and keep hydration in mind around training.",notes:["Build a routine you can maintain consistently.","Mix strength, cardio and recovery days.","Increase duration or resistance gradually as fitness improves."]}
+};
+
+function page(id){document.querySelectorAll(".page").forEach(x=>x.classList.toggle("active",x.id===id));document.querySelectorAll(".nav button").forEach(x=>x.classList.toggle("active",x.dataset.page===id));scrollTo(0,0);if(id==="cost")cost()}
+document.querySelectorAll(".nav button").forEach(b=>b.onclick=()=>page(b.dataset.page));$("chooseGoal").onclick=()=>page("goals");
+
+document.querySelectorAll(".pills").forEach(g=>g.querySelectorAll(".pill").forEach(b=>b.onclick=()=>{g.querySelectorAll(".pill").forEach(x=>x.classList.remove("selected"));b.classList.add("selected");const id=g.id;if(id==="focus")pick.focus=b.dataset.v;if(id==="area")pick.area=b.dataset.v;if(id==="level")pick.level=b.dataset.v;if(id==="budget")pick.budget=b.dataset.v}));
+
+function getVisits(){try{return JSON.parse(localStorage.getItem("gc3visits")||"[]")}catch(e){return[]}}
+function setVisits(v){localStorage.setItem("gc3visits",JSON.stringify(v))}
+function updateVisits(){
+ const v=getVisits(),now=new Date(),mon=new Date(now);mon.setHours(0,0,0,0);mon.setDate(now.getDate()-(now.getDay()||7)+1);
+ const ms=new Date(now.getFullYear(),now.getMonth(),1);
+ $("weekVisits").textContent=v.filter(x=>new Date(x.start)>=mon).length;$("monthVisits").textContent=v.filter(x=>new Date(x.start)>=ms).length;
+ const active=v.find(x=>x.active);$("clockIn").disabled=!!active;$("clockOut").disabled=!active;
+ $("clockStatus").textContent=active?"Clocked in at "+active.startTime+". Time spent: "+duration(active.start):"Clock in when you arrive and clock out when you leave.";
+ $("visits").innerHTML=v.length?v.slice(0,8).map(x=>`<div class="visit"><span><b>${x.date}</b><br><span class="small">${x.startTime}${x.endTime?" – "+x.endTime:" · Active"}<br>Time spent: ${x.active?duration(x.start):mins(x.duration)}</span></span><span class="badge">${x.active?"Active":"Visited"}</span></div>`).join(""):"<p class='small'>No visits recorded yet.</p>";
+}
+function mins(n){return n>=60?Math.floor(n/60)+" hr "+n%60+" min":n+" min"}function duration(s){return mins(Math.max(0,Math.round((Date.now()-new Date(s))/60000)))}
+$("clockIn").onclick=()=>{let v=getVisits();if(v.some(x=>x.active))return;let n=new Date();v.unshift({active:true,start:n.toISOString(),date:n.toLocaleDateString(undefined,{weekday:"short",day:"numeric",month:"short",year:"numeric"}),startTime:n.toLocaleTimeString(undefined,{hour:"numeric",minute:"2-digit"}),duration:0});setVisits(v);updateVisits()};
+$("clockOut").onclick=()=>{let v=getVisits(),i=v.findIndex(x=>x.active);if(i<0)return;let n=new Date(),s=new Date(v[i].start);v[i].active=false;v[i].endTime=n.toLocaleTimeString(undefined,{hour:"numeric",minute:"2-digit"});v[i].duration=Math.max(1,Math.round((n-s)/60000));setVisits(v);updateVisits();cost()};
+
+$("bmi").onclick=()=>{let w=+$("weight").value,h=+$("height").value/100;if(!w||!h){$("bmiResult").style.display="block";$("bmiResult").textContent="Enter your weight and height first.";return}let b=w/(h*h);$("bmiResult").style.display="block";$("bmiResult").innerHTML=`<div class="metric">${b.toFixed(1)}</div><b>Adult BMI: ${b<18.5?'Underweight':b<25?'Within normal range':b<30?'Overweight':'Obesity range'}</b>`};
+
+const VIDEO_LIBRARY={
+ "Squat":{id:"t2b8UdqmlFs",title:"How To Squat: Layne Norton's Squat Tutorial",source:"Bodybuilding.com"},
+ "Push-up":{id:"i9sTjhN4Z3M",title:"The RIGHT Way To Do Push-Ups (PERFECT FORM)",source:"Mind Pump TV"},
+ "Romanian deadlift":{id:"3VXmecChYYM",title:"How to do the ROMANIAN DEADLIFT! | 2 Minute Tutorial",source:"Max Euceda"},
+ "Bent-over row":{id:"FWJR5Ve8bnQ",title:"How to do the BENT-OVER BARBELL ROW! | 2 Minute Tutorial",source:"Max Euceda"},
+ "Walking lunge":{id:"vYfp2t4XgqQ",title:"Walking Lunge Tutorial - Proper Form and Technique",source:"Runna"},
+ "Plank":{id:"kSFvHo9p53Y",title:"Plank Tutorial - Proper Form and Technique",source:"Runna"}
+};
+function videoCard(name){const v=VIDEO_LIBRARY[name];if(!v)return "";return `<div class="videoCard"><iframe src="https://www.youtube.com/embed/${v.id}?rel=0&modestbranding=1" title="${v.title.replace(/"/g,'&quot;')}" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></div>`;}
+function detailHTML(type){
+ const days={
+ "Lose Fat":[["Day 1","Full body: squats, rows, push-ups, brisk walk"],["Day 2","Cardio + core: brisk walk/cycle, plank, dead bug"],["Day 3","REST","rest"],["Day 4","Lower body: squats, lunges, glute bridges"],["Day 5","Upper body: rows, push-ups, shoulder work"],["Day 6","Light activity + mobility"],["Day 7","REST","rest"]],
+ "Strength":[["Day 1","Lower body: squat pattern + lunges"],["Day 2","Upper body: push + row"],["Day 3","REST","rest"],["Day 4","Lower body: hinge pattern + step-ups"],["Day 5","Upper body: push + pull"],["Day 6","Technique + light activity"],["Day 7","REST","rest"]],
+ "Power":[["Day 1","Lower-body technique: squat + step-up"],["Day 2","Upper-body controlled push + row"],["Day 3","REST","rest"],["Day 4","Full-body power practice at a controlled level"],["Day 5","Core + technique"],["Day 6","Light activity"],["Day 7","REST","rest"]],
+ "Tone Up":[["Day 1","Full body: squats, push-ups, rows"],["Day 2","Core + brisk cardio"],["Day 3","REST","rest"],["Day 4","Lower body: lunges, glute bridges, step-ups"],["Day 5","Upper body + core"],["Day 6","Light cardio + mobility"],["Day 7","REST","rest"]]
+ }[type];
+ const ex=["Squat","Push-up","Bent-over row","Romanian deadlift","Walking lunge","Plank"];
+ return `<div class="result"><h3>7-day weekly split</h3>${days.map(d=>`<div class="day ${d[2]||""}"><b>${d[0]}</b>${d[1]}${d[2]?"":"<br><span class='small'>Use the sets, reps and rest shown below. Choose a manageable resistance and focus on good technique.</span>"}</div>`).join("")}<h3>Key exercises & video tutorials</h3>${ex.map(e=>`<div class="exercise"><div class="row"><b>${e}</b><span class="scheme">2–3 sets × 15 reps</span></div><p class="small">2–3 sets means repeat the exercise 2 or 3 separate times. 15 reps means perform the movement 15 times per set. Rest 45–90 seconds between sets unless your plan says otherwise.</p>${videoCard(e)}</div>`).join("")}<h3>Budget-friendly meals</h3><p class="small">Examples: beans, eggs, rice, oats, vegetables, fruit and fish/chicken when available. Choose balanced portions that fit your needs and household budget.</p><div class="notice"><b>Training note:</b> Rest days are part of the plan. Stop if an exercise causes pain and seek qualified guidance when needed.</div></div>`;
+}
+$("loseContent").innerHTML=detailHTML("Lose Fat");$("strengthContent").innerHTML=detailHTML("Strength");$("powerContent").innerHTML=detailHTML("Power");$("toneContent").innerHTML=detailHTML("Tone Up");
+
+$("getRec").onclick=()=>{
+ if(!pick.focus||!pick.area||!pick.level||!pick.budget){$("goalError").textContent="Please choose all four options first.";return}
+ const d=data[pick.focus] || data[pick.focus.replace(/\w/g,m=>m.toUpperCase())] || data[Object.keys(data).find(k=>k.toLowerCase()===pick.focus.toLowerCase())];
+ $("goalError").textContent="";
+ $("recCard").style.display="block";
+ $("recTitle").textContent=d.detail;
+ $("recMeta").textContent=pick.focus+" · "+pick.area+" · "+pick.level+" · "+pick.budget;
+ $("recScheme").textContent=d.scheme;
+ $("recRest").textContent=d.rest;
+ $("recExercises").innerHTML=d.exercises.map(x=>"<li>"+x+"</li>").join("");
+ $("recMeals").innerHTML=d.meals.map(x=>"<li>"+x+"</li>").join("");
+ $("recMealNote").textContent=d.mealNote;
+ $("recNotes").innerHTML=d.notes.map(x=>"<li>"+x+"</li>").join("");
+ $("openPlan").onclick=()=>{
+  page("goals");
+  document.querySelectorAll(".goal").forEach(x=>x.open=false);
+  $(d.plan).open=true;
+  setTimeout(()=>$(d.plan).scrollIntoView({behavior:"smooth",block:"start"}),30);
+ };
+ $("recCard").scrollIntoView({behavior:"smooth"});
+};
+
+function cost(){
+ let r;try{r=JSON.parse(localStorage.getItem("gc3rates")||"null")}catch(e){}
+ r=r||{d:1000,w:5000,m:15000};$("daily").value=r.d;$("weekly").value=r.w;$("monthly").value=r.m;
+ let now=new Date(),s=new Date(now.getFullYear(),now.getMonth()-1,1),e=new Date(now.getFullYear(),now.getMonth(),1),n=getVisits().filter(x=>new Date(x.start)>=s&&new Date(x.start)<e).length;
+ let vals=[["Daily",n*r.d],["Weekly",Math.ceil(n/7)*r.w],["Monthly",r.m]].sort((a,b)=>a[1]-b[1]);$("costResult").innerHTML=`<b>${s.toLocaleDateString(undefined,{month:"long",year:"numeric"})}: ${n} visits</b><p class="small">Daily: ₦${(n*r.d).toLocaleString()}<br>Weekly: ₦${(Math.ceil(n/7)*r.w).toLocaleString()}<br>Monthly: ₦${r.m.toLocaleString()}</p><div class="notice"><b>Suggested option: ${vals[0][0]}</b><br><span class="small">Based on the recorded number of visits last month.</span></div>`;
+}
+$("saveRates").onclick=()=>{localStorage.setItem("gc3rates",JSON.stringify({d:+$("daily").value||0,w:+$("weekly").value||0,m:+$("monthly").value||0}));cost()};
+
+function profile(){
+ let n=localStorage.getItem("gc3name")||"Ruth";$("nameText").textContent=n;$("nameInput").value=n;$("initials").textContent=n.split(/\s+/).map(x=>x[0]).join("").slice(0,2).toUpperCase();
+ let img=localStorage.getItem("gc3photo");
+ if(img){$("avatarImg").src=img;$("avatarImg").style.display="block";$("initials").style.display="none";}
+ else{$("avatarImg").removeAttribute("src");$("avatarImg").style.display="none";$("initials").style.display="inline";}
+}
+$("saveName").onclick=()=>{localStorage.setItem("gc3name",$("nameInput").value.trim()||"Ruth");profile()};
+
+
+function escapeCoachText(value){return String(value||"").replace(/[&<>\"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;", "'":"&#39;"}[c]));}
+function coachSentTime(){return new Date().toLocaleTimeString([], {hour:"numeric",minute:"2-digit"});}
+function builtInCoachAnswer(question){
+ const q=question.toLowerCase().trim();
+ const answers=[
+  {keys:['cheap food','cheap meal','lose weight','weight loss'], text:'For a simple, budget-friendly option, build meals around affordable local foods: eggs, beans (ewa), moi moi, garri, oats, groundnuts, dried or tinned fish, vegetables and seasonal fruit. Pair a protein such as eggs, beans or fish with a filling carbohydrate and vegetables. You do not need expensive "diet" foods to support a fitness goal.'},
+  {keys:['protein substitute','substitute for protein','protein source','protein'], text:'Affordable protein options include eggs, beans, moi moi, groundnuts, dried fish, tinned sardines, soya and chicken gizzard or other affordable local protein sources. Choose the option that fits your budget and what is available locally.'},
+  {keys:['meals under ₦1,000','meals under 1000','under ₦1,000','under 1000'], text:'For a meal around ₦1,000, try beans with a modest portion of garri or another local staple, eggs with vegetables and a small portion of oats, or a simple rice/plantain meal with beans or eggs. Prices vary by location, so use what is cheapest and available at your local market.'},
+  {keys:['best exercise for arms','exercise for arms','arms'], text:'Good beginner-to-intermediate arm options include biceps curls, triceps extensions or push-downs, rows and controlled push-ups. Focus on good technique, a manageable weight and gradual progression rather than rushing the load.'},
+  {keys:['squat','squats'], text:'For a squat, keep your feet stable, brace your core, bend at the hips and knees, and lower under control while keeping your knees tracking in line with your feet. Start with a comfortable range of motion and prioritize technique.'},
+  {keys:['push-up','push up','pushups'], text:'For a push-up, keep your body in a straight line, brace your core, place your hands comfortably under or just outside your shoulders, lower with control and press back up. Use an elevated surface if a floor push-up is currently too difficult.'},
+  {keys:['deadlift','romanian deadlift','rdl'], text:'For a Romanian deadlift, keep the weight close to your body, soften your knees, push your hips back and keep your spine neutral. Lower only as far as you can maintain good control, then drive your hips forward to stand.'},
+  {keys:['cardio'], text:'Cardio can include brisk walking, cycling, jogging or another activity you enjoy. Start at a comfortable intensity and build gradually. Pairing regular movement with sensible strength training can support general fitness.'}
+ ];
+ const hit=answers.find(a=>a.keys.some(k=>q.includes(k)));
+ return hit?.text || null;
+}
+
+async function askGemini(){
+ const input=$("chatInput"), q=input.value.trim();
+ if(!q)return;
+ const m=$("messages");
+ const userBubble=document.createElement("div");
+ userBubble.className="msg user";
+ userBubble.innerHTML=escapeCoachText(q)+`<div class="msgMeta">Sent ${coachSentTime()}</div>`;
+ m.appendChild(userBubble);
+ input.value="";
+ const typing=document.createElement("div");
+ typing.className="msg bot";
+ typing.id="aiTyping";
+ typing.textContent="Thinking…";
+ m.appendChild(typing);
+ m.scrollTop=m.scrollHeight;
+ const builtIn=builtInCoachAnswer(q);
+ if(builtIn){
+   typing.textContent=builtIn;
+   m.scrollTop=m.scrollHeight;
+   return;
+ }
+ try{
+   const r=await fetch("/api/gemini",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({message:q,name:localStorage.getItem("gc3name")||"User",appContext:{focus:pick.focus,area:pick.area,level:pick.level,budget:pick.budget}})});
+   const raw=await r.text();
+   let data={};
+   try{data=raw?JSON.parse(raw):{};}catch(parseErr){throw new Error("AI service returned an invalid response");}
+   if(!r.ok)throw new Error(data.error||"AI service unavailable");
+   let answer=String(data.text||"").trim();
+   if(!answer)throw new Error("No AI answer was returned");
+   typing.textContent=answer;
+ }catch(e){
+   const fallback=builtInCoachAnswer(q) || "I can help with your fitness goals, exercises, affordable food ideas, protein choices and training basics. Try asking about a specific exercise, meal, body area or goal.";
+   typing.textContent=fallback;
+ }
+ m.scrollTop=m.scrollHeight;
+}
+
+$("sendChat").onclick=askGemini;
+$("chatInput").onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();askGemini()}};
+document.querySelectorAll(".coachSuggestion").forEach(btn=>{
+  btn.onclick=()=>{ $("chatInput").value=btn.dataset.question||btn.textContent.trim(); askGemini(); };
+});
+
+$("resetClock").onclick=()=>{
+ if(confirm("Reset only the clock-in/clock-out history for this testing session?")){
+  localStorage.removeItem("gc3visits");
+  updateVisits();
+  cost();
+  $("paymentStatus").textContent="Clock history has been reset. Your profile and other settings were kept.";
+ }
+};
+
+// Password and reset are handled by Firebase in the module below.
+
+
+let cart=[];
+function renderCart(){
+ const box=$("cartBox"), checkout=$("checkoutBtn");
+ if(!cart.length){box.innerHTML="<b>Cart is empty</b><p class='small'>Add an item to see the checkout total.</p>";checkout.disabled=true;return}
+ let total=cart.reduce((s,x)=>s+x.price,0);
+ box.innerHTML=cart.map((x,i)=>`<div class="cartline"><span>${x.name}</span><b>₦${x.price.toLocaleString()}</b></div>`).join("")+
+  `<p><b>Total: ₦${total.toLocaleString()}</b></p><button class="btn secondary full" id="clearCart">CLEAR CART</button>`;
+ checkout.disabled=false;
+ $("clearCart").onclick=()=>{cart=[];renderCart()};
+}
+document.querySelectorAll(".buyItem").forEach(btn=>btn.onclick=()=>{
+ cart.push({name:btn.dataset.name,price:+btn.dataset.price});
+ $("paymentStatus").textContent="";
+ renderCart();
+});
+$("checkoutBtn").onclick=()=>{
+ if(!cart.length)return;
+ const total=cart.reduce((s,x)=>s+x.price,0);
+ $("paymentStatus").innerHTML=`Your basket total is <b>₦${total.toLocaleString()}</b>. Secure checkout will be enabled when the shop is launched.`;
+};
+
+
+
+function renderWeightHistory(){const w=JSON.parse(localStorage.getItem("gc3weights")||"[]");const box=$("weightHistory");if(!box)return;box.innerHTML=w.length?w.slice(0,8).map(x=>`<div class="visit"><span><b>${x.date}</b><br><span class="small">${x.weight} kg</span></span><span class="badge">Logged</span></div>`).join(""):"<p class='small'>No weight entries yet.</p>";}
+$("logWeight").onclick=async()=>{const val=+$("weight").value;if(!val){$("bmiResult").style.display="block";$("bmiResult").textContent="Enter your weight first.";return;}const arr=JSON.parse(localStorage.getItem("gc3weights")||"[]");arr.unshift({weight:val,date:new Date().toISOString()});localStorage.setItem("gc3weights",JSON.stringify(arr));renderWeightHistory();window.gcSaveWeight?.(val);$("bmiResult").style.display="block";$("bmiResult").innerHTML=`<b>Weight logged: ${val} kg</b>`;};
+window.gcRenderWeights=renderWeightHistory;
+renderWeightHistory();
+
+$("sendFeedback").onclick=async()=>{
+ const t=$("feedbackText").value.trim(), btn=$("sendFeedback"), status=$("feedbackStatus");
+ if(!t){status.textContent="Please enter a suggestion first.";return;}
+ if(!window.gcSubmitFeedback){status.textContent="Please log in before sending a suggestion.";return;}
+ btn.disabled=true; btn.textContent="SENDING…"; status.textContent="Sending…";
+ try{await window.gcSubmitFeedback(t);}finally{btn.disabled=false;btn.textContent="SEND SUGGESTION";}
+};
+window.gcPick=pick;window.gcData=data;window.gcCart=cart;window.gcUpdateVisits=updateVisits;window.gcCost=cost;profile();updateVisits();cost();setInterval(updateVisits,30000);
+})();
+
+const $ = id => document.getElementById(id);
+function setTodayDate(){
+  const el=document.getElementById("todayDate");
+  if(!el)return;
+  const now=new Date();
+  el.textContent=now.toLocaleDateString(undefined,{weekday:"long",month:"long",day:"numeric",year:"numeric"});
+  el.style.display="block";
+}
+// Run after the page has rendered as well as immediately.
+setTodayDate();
+window.addEventListener("DOMContentLoaded",setTodayDate);
+/* Settings: light/dark theme */
+const savedTheme=localStorage.getItem("gc3theme")||"light";
+document.body.classList.toggle("dark",savedTheme==="dark");
+function setTheme(theme){
+  document.body.classList.toggle("dark",theme==="dark");
+  localStorage.setItem("gc3theme",theme);
+}
+$("lightTheme").onclick=()=>setTheme("light");
+$("darkTheme").onclick=()=>setTheme("dark");
+
+/* Profile picture upload: store a compressed preview locally for this app */
+$("photoInput").onchange=(e)=>{
+  const file=e.target.files[0]; if(!file)return;
+  if(!file.type.startsWith("image/")){$("profileStatus").textContent="Please choose an image file.";return}
+  const reader=new FileReader();
+  reader.onload=()=>{
+    const img=new Image();
+    img.onload=()=>{
+      const canvas=document.createElement("canvas"), max=500;
+      const scale=Math.min(1,max/Math.max(img.width,img.height));
+      canvas.width=Math.max(1,Math.round(img.width*scale));
+      canvas.height=Math.max(1,Math.round(img.height*scale));
+      canvas.getContext("2d").drawImage(img,0,0,canvas.width,canvas.height);
+      const data=canvas.toDataURL("image/jpeg",0.82);
+      localStorage.setItem("gc3photo",data);
+      $("profileStatus").textContent="Profile picture updated.";
+      if(typeof profile==="function")profile();
+    };
+    img.src=reader.result;
+  };
+  reader.readAsDataURL(file);
+};
+
+/* Firebase handles logout; logout overlay is handled by Firebase. */
+</script>
+
+<script type="module">
+import {
+  auth, db, storage,
+  onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword,
+  sendPasswordResetEmail, signOut, updateProfile,
+  doc, setDoc, getDoc, collection, addDoc, getDocs, updateDoc, serverTimestamp,
+  ref, uploadBytes, getDownloadURL
+} from "./firebase.js";
+
+const $ = id => document.getElementById(id);
+const gate = $("firebaseGate");
+const loginPane = $("loginPane"), signupPane = $("signupPane"), authMsg = $("firebaseAuthMsg");
+let currentUser = null;
+function showAuthMessage(msg, ok=false){ authMsg.textContent=msg||""; authMsg.style.color=ok?"#55751d":"#c43f3f"; }
+function setGate(show){ gate.style.display=show?"flex":"none"; document.body.style.overflow=show?"hidden":""; }
+function cleanName(user){ return (user?.displayName || user?.email?.split("@")[0] || "Member").trim(); }
+function firebaseAuthError(err){
+  const map={"auth/invalid-credential":"Email or password is incorrect.","auth/invalid-email":"Please enter a valid email address.","auth/email-already-in-use":"An account with this email already exists.","auth/weak-password":"Password must be at least 6 characters.","auth/too-many-requests":"Too many attempts. Please wait a little and try again.","auth/network-request-failed":"Network error. Check your internet connection.","auth/operation-not-allowed":"Email/password sign-in is not enabled in Firebase yet."};
+  return map[err?.code]||err?.message||"Authentication failed. Please try again.";
+}
+$("showSignup").onclick=()=>{loginPane.classList.add("hidden");signupPane.classList.remove("hidden");showAuthMessage("");};
+$("showLogin").onclick=()=>{signupPane.classList.add("hidden");loginPane.classList.remove("hidden");showAuthMessage("");};
+$("loginForm").addEventListener("submit",async e=>{e.preventDefault();showAuthMessage("Signing in…",true);try{await signInWithEmailAndPassword(auth,$("loginEmail").value.trim(),$("loginPassword").value);}catch(err){showAuthMessage(firebaseAuthError(err));}});
+$("signupForm").addEventListener("submit",async e=>{e.preventDefault();showAuthMessage("Creating account…",true);try{const name=$("signupName").value.trim();const cred=await createUserWithEmailAndPassword(auth,$("signupEmail").value.trim(),$("signupPassword").value);await updateProfile(cred.user,{displayName:name});await setDoc(doc(db,"users",cred.user.uid),{name,email:cred.user.email,createdAt:serverTimestamp(),updatedAt:serverTimestamp()},{merge:true});}catch(err){showAuthMessage(firebaseAuthError(err));}});
+$("forgotFirebase").onclick=async()=>{const email=$("loginEmail").value.trim();if(!email){showAuthMessage("Enter your email first, then tap Forgot password.");return;}try{await sendPasswordResetEmail(auth,email);showAuthMessage("Password reset email sent. Check your inbox.",true);}catch(err){showAuthMessage(firebaseAuthError(err));}};
+
+async function saveUserProfile(extra={}){if(!currentUser)return;await setDoc(doc(db,"users",currentUser.uid),{name:cleanName(currentUser),email:currentUser.email||"",updatedAt:serverTimestamp(),...extra},{merge:true});}
+async function loadProfile(){
+  if(!currentUser)return;
+  try{
+    const snap=await getDoc(doc(db,"users",currentUser.uid));
+    const d=snap.exists()?snap.data():{};
+    const name=(d.name||cleanName(currentUser)||"Member").trim();
+    localStorage.setItem("gc3name",name);
+    if($("nameText"))$("nameText").textContent=name;
+    if($("nameInput"))$("nameInput").value=name;
+
+    // Always restore the saved profile picture from Firebase after login.
+    // If the remote profile is unavailable, keep the device copy instead of replacing it.
+    if(d.photoURL){
+      localStorage.setItem("gc3photo",d.photoURL);
+      if($("avatarImg")){
+        $("avatarImg").src=d.photoURL;
+        $("avatarImg").style.display="block";
+      }
+      if($("initials"))$("initials").style.display="none";
+    }else{
+      profile();
+    }
+
+    const deviceTheme=localStorage.getItem("gc3theme")||"light";
+    document.body.classList.toggle("dark",deviceTheme==="dark");
+    setTodayDate();
+  }catch(e){
+    console.warn("Profile load failed",e);
+    profile();
+    setTodayDate();
+  }
+}
+async function loadVisitsFromFirebase(){
+  if(!currentUser)return;try{const snap=await getDocs(collection(db,"users",currentUser.uid,"visits"));const visits=[];snap.forEach(ds=>visits.push({...ds.data(),id:ds.id}));visits.sort((a,b)=>new Date(b.start)-new Date(a.start));localStorage.setItem("gc3visits",JSON.stringify(visits));if(typeof window.gcUpdateVisits==="function")window.gcUpdateVisits();if(typeof window.gcCost==="function")window.gcCost();}catch(e){console.warn("Visits load failed",e);}
+}
+async function cloudClockIn(){
+  if(!currentUser)return;const v=JSON.parse(localStorage.getItem("gc3visits")||"[]");if(v.some(x=>x.active))return;const n=new Date();const visit={active:true,start:n.toISOString(),date:n.toLocaleDateString(undefined,{weekday:"short",day:"numeric",month:"short",year:"numeric"}),startTime:n.toLocaleTimeString(undefined,{hour:"numeric",minute:"2-digit"}),duration:0};try{const r=await addDoc(collection(db,"users",currentUser.uid,"visits"),{...visit,createdAt:serverTimestamp()});visit.id=r.id;v.unshift(visit);localStorage.setItem("gc3visits",JSON.stringify(v));window.gcUpdateVisits?.();}catch(e){alert("Could not clock in: "+e.message);}}
+async function cloudClockOut(){
+  if(!currentUser)return;const v=JSON.parse(localStorage.getItem("gc3visits")||"[]"),i=v.findIndex(x=>x.active);if(i<0)return;const n=new Date(),s=new Date(v[i].start),minutes=Math.max(1,Math.round((n-s)/60000));const patch={active:false,endTime:n.toLocaleTimeString(undefined,{hour:"numeric",minute:"2-digit"}),duration:minutes,end:n.toISOString(),updatedAt:serverTimestamp()};try{if(v[i].id)await updateDoc(doc(db,"users",currentUser.uid,"visits",v[i].id),patch);Object.assign(v[i],patch);localStorage.setItem("gc3visits",JSON.stringify(v));window.gcUpdateVisits?.();window.gcCost?.();}catch(e){alert("Could not clock out: "+e.message);}}
+async function cloudResetClock(){
+  if(!currentUser||!confirm("Reset your clock history for testing?"))return;try{const snap=await getDocs(collection(db,"users",currentUser.uid,"visits"));await Promise.all(snap.docs.map(ds=>updateDoc(ds.ref,{deletedForTesting:true,updatedAt:serverTimestamp()})));localStorage.setItem("gc3visits","[]");window.gcUpdateVisits?.();window.gcCost?.();$("paymentStatus").textContent="Clock history reset for this testing session.";}catch(e){alert("Could not reset clock history: "+e.message);}}
+async function uploadProfile(file){
+  if(!currentUser||!file)return;
+  if(!file.type.startsWith("image/")){if($("profileStatus"))$("profileStatus").textContent="Please choose an image file.";return;}
+  try{
+    $("profileStatus").textContent="Preparing picture…";
+    const dataUrl=await new Promise((resolve,reject)=>{
+      const reader=new FileReader();
+      reader.onerror=()=>reject(new Error("Could not read the image."));
+      reader.onload=()=>{
+        const img=new Image();
+        img.onload=()=>{
+          const max=480, scale=Math.min(1,max/Math.max(img.width,img.height));
+          const c=document.createElement("canvas");
+          c.width=Math.max(1,Math.round(img.width*scale));
+          c.height=Math.max(1,Math.round(img.height*scale));
+          const ctx=c.getContext("2d");
+          ctx.drawImage(img,0,0,c.width,c.height);
+          resolve(c.toDataURL("image/jpeg",0.72));
+        };
+        img.onerror=()=>reject(new Error("That image could not be processed."));
+        img.src=reader.result;
+      };
+      reader.readAsDataURL(file);
+    });
+
+    // Persist a compact copy in Firestore as the reliable source of truth.
+    // This means the picture survives logout, login, refresh and opening the app again.
+    localStorage.setItem("gc3photo",dataUrl);
+    if($("avatarImg")){ $("avatarImg").src=dataUrl; $("avatarImg").style.display="block"; }
+    if($("initials"))$("initials").style.display="none";
+    $("profileStatus").textContent="Saving picture…";
+
+    await saveUserProfile({photoURL:dataUrl,photoFallback:true});
+
+    // Also try Firebase Storage when it is configured, but do not depend on it.
+    try{
+      const blob=await (await fetch(dataUrl)).blob();
+      const r=ref(storage,`users/${currentUser.uid}/profile/profile.jpg`);
+      await uploadBytes(r,blob,{contentType:"image/jpeg",cacheControl:"public,max-age=31536000"});
+      const url=await getDownloadURL(r);
+      await saveUserProfile({photoURL:url,photoFallback:false});
+      localStorage.setItem("gc3photo",url);
+      if($("avatarImg"))$("avatarImg").src=url;
+    }catch(storageErr){
+      console.warn("Storage upload unavailable; Firestore picture retained.",storageErr);
+    }
+    $("profileStatus").textContent="Profile picture updated.";
+  }catch(e){
+    $("profileStatus").textContent="Could not update profile picture: "+(e.message||"Please try another image.");
+    console.error("Profile picture upload failed",e);
+  }
+}
+$("avatarPhotoInput")?.addEventListener("change",e=>uploadProfile(e.target.files[0]));$("photoInput")?.addEventListener("change",e=>uploadProfile(e.target.files[0]));
+$("saveName").onclick=async()=>{const name=$("nameInput").value.trim();if(!name)return;try{await updateProfile(currentUser,{displayName:name});await saveUserProfile({name});$("nameText").textContent=name;localStorage.setItem("gc3name",name);$("profileStatus").textContent="Name updated.";}catch(e){$("profileStatus").textContent="Could not save name: "+e.message;}};
+$("clockIn").onclick=cloudClockIn;$("clockOut").onclick=cloudClockOut;$("resetClock").onclick=cloudResetClock;
+$("logout").onclick=async()=>{try{await signOut(auth);}catch(e){$("logoutStatus").textContent=e.message;}};
+$("togglePasswordForm").onclick=()=>{const box=$("passwordForm"),btn=$("togglePasswordForm");const open=box.style.display!=="none";box.style.display=open?"none":"block";btn.textContent=open?"CHANGE PASSWORD":"CLOSE PASSWORD FORM";if(open){$("passStatus").textContent="";$("currentPass").value=$("newPass").value=$("confirmPass").value="";}};
+$("changePass").onclick=async()=>{const current=$("currentPass").value,next=$("newPass").value,confirmPass=$("confirmPass").value;if(!current||!next){$("passStatus").textContent="Enter your current and new passwords.";return;}if(next.length<6){$("passStatus").textContent="Use at least 6 characters.";return;}if(next!==confirmPass){$("passStatus").textContent="The new passwords do not match.";return;}try{const {EmailAuthProvider,reauthenticateWithCredential,updatePassword}=await import("https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js");await reauthenticateWithCredential(currentUser,EmailAuthProvider.credential(currentUser.email,current));await updatePassword(currentUser,next);$("currentPass").value=$("newPass").value=$("confirmPass").value="";$("passStatus").textContent="Password changed successfully.";}catch(e){$("passStatus").textContent=firebaseAuthError(e);}};
+$("lightTheme").onclick=async()=>{document.body.classList.remove("dark");localStorage.setItem("gc3theme","light");try{await saveUserProfile({theme:"light"})}catch(e){}};$("darkTheme").onclick=async()=>{document.body.classList.add("dark");localStorage.setItem("gc3theme","dark");try{await saveUserProfile({theme:"dark"})}catch(e){}};
+
+async function saveWeightCloud(weight){if(!currentUser)return;try{const r=await addDoc(collection(db,"users",currentUser.uid,"weights"),{weight:Number(weight),loggedAt:serverTimestamp(),date:new Date().toISOString()});return r.id;}catch(e){console.warn("Weight save failed",e);}}
+async function loadWeightsFromFirebase(){if(!currentUser)return;try{const snap=await getDocs(collection(db,"users",currentUser.uid,"weights"));const arr=[];snap.forEach(ds=>{const d=ds.data();arr.push({id:ds.id,weight:d.weight,date:d.date||new Date().toISOString()});});arr.sort((a,b)=>new Date(b.date)-new Date(a.date));localStorage.setItem("gc3weights",JSON.stringify(arr));window.gcRenderWeights?.();}catch(e){console.warn("Weights load failed",e);}}
+async function submitFeedback(text){
+ if(!currentUser){$("feedbackStatus").textContent="Please log in before sending a suggestion.";return false;}
+ try{
+   const payload={text:String(text).trim(),userId:currentUser.uid,name:cleanName(currentUser),email:currentUser.email||"",createdAt:serverTimestamp(),date:new Date().toISOString()};
+   await addDoc(collection(db,"users",currentUser.uid,"feedback"),payload);
+   await addDoc(collection(db,"developerSuggestions"),payload);
+   $("feedbackText").value="";
+   $("feedbackStatus").textContent="Suggestion sent successfully. Thank you!";
+   return true;
+ }catch(e){
+   $("feedbackStatus").textContent="Could not send suggestion: "+e.message;
+   return false;
+ }
+}
+window.gcSubmitFeedback=submitFeedback;window.gcSaveWeight=saveWeightCloud;
+onAuthStateChanged(auth,async user=>{currentUser=user;if(!user){setGate(true);loginPane.classList.remove("hidden");signupPane.classList.add("hidden");showAuthMessage("");return;}setGate(false);setTodayDate();const deviceTheme=localStorage.getItem("gc3theme")||"light";document.body.classList.toggle("dark",deviceTheme==="dark");await loadProfile();await loadVisitsFromFirebase();await loadWeightsFromFirebase();try{await saveUserProfile({name:cleanName(user)});}catch(e){console.warn(e);}});
+</script>
+</body>
+</html>
