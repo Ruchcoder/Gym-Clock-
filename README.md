@@ -34,3 +34,5 @@ Adult BMI categories are shown as Underweight, Within normal range, Overweight, 
 
 ## Where developer suggestions are stored
 User feedback is saved in Firestore in two places: `users/{userId}/feedback` and the easier-to-review top-level `developerSuggestions` collection. In Firebase Console, open Firestore Database and select `developerSuggestions` to see suggestions from all users.
+
+
